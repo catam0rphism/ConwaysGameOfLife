@@ -57,6 +57,8 @@ namespace ConwayaGameOfLifeGUI
 
         private void gameMethod(object sender, System.Timers.ElapsedEventArgs e)
         {
+            if (lg.Cells.GetLength(0) != cells.Cells.GetLength(0))
+                lg.Cells = Cells.Cells;
             try
             {                
                 cells.Cells = lg.NextGeneration();

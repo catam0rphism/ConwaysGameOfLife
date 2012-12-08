@@ -30,7 +30,12 @@ namespace ConwaysGameOfLife
         {
             get { return cells; }
             /* private */
-            set { cells = value; }
+            set
+            {
+                width = cells.GetLength(0);
+                heigth = cells.GetLength(1);
+                cells = value; 
+            }
         }
 
         public bool[,] NextGeneration()

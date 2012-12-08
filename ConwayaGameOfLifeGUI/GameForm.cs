@@ -36,8 +36,21 @@ namespace ConwayaGameOfLifeGUI
 
         void setImage(Bitmap img)
         {
-            pictureBox.Image = img;
-            pictureBox.Invoke(new voiddel(pictureBox.Refresh));
+            try
+            {
+                pictureBox.Invoke(
+                    new voiddel(
+                        delegate
+                        {
+                            pictureBox.Image = img;
+                            pictureBox.Refresh();
+                        }));
+            }
+            catch(Exception e)
+            {
+                lg.Stop();
+                MessageBox.Show(e.Message);
+            }
         }
 
         void lg_generationUpdate(object sender, Game.CellsEventArgs e)
@@ -91,6 +104,29 @@ namespace ConwayaGameOfLifeGUI
         private void stopToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lg.Stop();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lg.Stop(); // подстраховка на случай исключений
+            this.Close();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException("В разработке");
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException("В разработке");
+        }
+
+        private void cleanToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lg.Stop();
+            lg.Update(new CellsImage());
+            setImage(lg.Cells.Image);
         }
     }
 }

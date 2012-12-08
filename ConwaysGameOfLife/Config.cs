@@ -75,7 +75,7 @@ namespace ConwaysGameOfLife
             get { return _worldSize; }
             set { _worldSize = value; }
         }
-        private Size _worldSize = new System.Drawing.Size(20, 20);
+        private Size _worldSize = new System.Drawing.Size(40, 40);
 
         [XmlIgnore]
         public Color AliveColor
@@ -105,7 +105,7 @@ namespace ConwaysGameOfLife
             get { return pixtocell; }
             set { pixtocell = value; }
         }
-        private int pixtocell = 5;
+        private int pixtocell = 10;
     }
 }
 
