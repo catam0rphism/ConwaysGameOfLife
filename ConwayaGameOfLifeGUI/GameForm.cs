@@ -36,21 +36,17 @@ namespace ConwayaGameOfLifeGUI
 
         void setImage(Bitmap img)
         {
-            try
-            {
-                pictureBox.Invoke(
+            lg.Stop();
+
+            pictureBox.Invoke(
                     new voiddel(
                         delegate
                         {
                             pictureBox.Image = img;
                             pictureBox.Refresh();
                         }));
-            }
-            catch(Exception e)
-            {
-                lg.Stop();
-                MessageBox.Show(e.Message);
-            }
+            lg.Start();
+            
         }
 
         void lg_generationUpdate(object sender, Game.CellsEventArgs e)
