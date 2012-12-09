@@ -5,17 +5,11 @@ using System.Text;
 using System.Threading;
 using System.IO;
 using ConwaysGameOfLife;
-using System.Drawing;
 
 namespace ConwaysGameOfLife
 {
     public static class LifeGameConverter
     {
-        /// <summary>
-        /// Сохраняет текстовое представление поля на диск
-        /// </summary>
-        /// <param name="cells">Игровое поле</param>
-        /// <param name="FileName">Имя конечного файла</param>
         public static void SaveToFile(bool[,] cells,string FileName)
         {
             try
@@ -39,11 +33,6 @@ namespace ConwaysGameOfLife
                 throw;
             }
         }
-        /// <summary>
-        /// Загружает игровое поле из файла с текстовым представлением
-        /// </summary>
-        /// <param name="FileName">Имя файла с текстовым представлением поля</param>
-        /// <returns></returns>
         public static bool[,] LoadFromFile(string FileName)
         {
             try
@@ -72,30 +61,9 @@ namespace ConwaysGameOfLife
             }
         }
 
-        /// <summary>
-        /// Сохраняет текущее сстояние поля в виде изображения
-        /// </summary>
-        /// <param name="cells">Массив игрового поля</param>
-        /// <param name="FileName">Имя конечного файла</param>
         public static void SaveToImage(bool[,] cells, string FileName)
         {
             CellsImage.GetImg(cells).Save(FileName);
-        }
-        /// <summary>
-        /// Загружает игровое поле из файла с изображением (Учитывая текущую цветовую схему!)
-        /// </summary>
-        /// <param name="FileName">Имя файла с изображением</param>
-        /// <returns></returns>
-        public static CellsImage LoadFromImage(string FileName)
-        {
-            using (FileStream fs = new FileStream(FileName, FileMode.Open))
-            {
-                Bitmap img = new Bitmap(Bitmap.FromStream(fs));
-                CellsImage c = new CellsImage();
-                c.Image = img;
-                return c;
-            }
-            
         }
     }
 }

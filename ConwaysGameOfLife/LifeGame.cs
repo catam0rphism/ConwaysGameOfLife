@@ -18,11 +18,12 @@ namespace ConwaysGameOfLife
             this.cells = cells;
         }
 
-        // TODO: переписать на CellImage !
+        #region Fields
         bool[,] cells;
 
         int width;
         int heigth;
+        #endregion
 
         public bool[,] Cells
 
@@ -67,8 +68,7 @@ namespace ConwaysGameOfLife
         int livecount(int w, int h)
         {
             int c = 0;
-            // ТУТ ВСЕ РАБОТАЕТ ТАК КАК НАДО!
-            #region livecount
+            
             if (w == 0)
             {
                 #region left border
@@ -193,16 +193,23 @@ namespace ConwaysGameOfLife
                 }
                 #endregion
             }
-            #endregion
             return c;
         }
         bool Analize(int w,int h)
         {
             int c = livecount(w, h);
-            // гениально :)
-            return cells[w, h] ? (c == 2) | (c == 3) : (c == 3);
-            // игровые правила
-            // TODO: поддежка других автоматов (правила как один Enum)
+            if (cells[w, h])
+            {
+                // cell alive
+                
+                // Game rulse
+                return (c == 2) | (c == 3);
+            }
+            else
+            {
+                // cell died
+                return (c == 3);
+            }
         }
     }
 }

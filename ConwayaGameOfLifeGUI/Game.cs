@@ -12,8 +12,6 @@ namespace ConwayaGameOfLifeGUI
         System.Timers.Timer generationTimer;
         LifeGame lg;
         CellsImage cells;
-#warning убрать public!
-        public Thread gameThread; 
 
         public void Random()
         {
@@ -37,13 +35,12 @@ namespace ConwayaGameOfLifeGUI
 
         public Game()
         {
+            generationTimer = new System.Timers.Timer(Config.Conf.timerInterval);
+            generationTimer.Elapsed += gameMethod;
             System.Drawing.Size s = Config.Conf.worldSize;
             cells = new CellsImage(new bool[s.Width,s.Height]);
 
             lg = new LifeGame(cells.Cells);
-
-            gameThread = new Thread(gameThreadMain);
-            gameThread.Start();
             
         }
         public Game(CellsImage cells)
@@ -58,11 +55,6 @@ namespace ConwayaGameOfLifeGUI
 
         }
 
-        private void gameThreadMain()
-        {
-            generationTimer = new System.Timers.Timer(Config.Conf.timerInterval);
-            generationTimer.Elapsed += gameMethod;
-        }
         private void gameMethod(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (lg.Cells.GetLength(0) != cells.Cells.GetLength(0))
@@ -88,7 +80,7 @@ namespace ConwayaGameOfLifeGUI
 
         public void Start()
         {
-            //lg.Cells = Cells.Cells;
+            lg.Cells = Cells.Cells;
             lock (generationTimer)
             {
                 generationTimer.Start();
