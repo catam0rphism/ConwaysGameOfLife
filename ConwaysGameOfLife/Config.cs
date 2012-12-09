@@ -23,12 +23,15 @@ namespace ConwaysGameOfLife
         {
             get
             {
+                // для синхронизации
                 lock (lockFlag)
                 {
+                    // первое обращение (или после обнуления)
                     if (_conf == null)
                     {
                         try
                         {
+                            // попытка десериализации
                             using (FileStream fs = new FileStream("Config.Xml", FileMode.Open))
                             {
                                 XmlSerializer xs = new XmlSerializer(typeof(Config));
@@ -37,6 +40,7 @@ namespace ConwaysGameOfLife
                         }
                         catch (Exception)
                         {
+                            // неудача -> создание нового файла
                             _conf = new Config();
                         }
                     }
@@ -47,6 +51,7 @@ namespace ConwaysGameOfLife
 
         public static void Reload()
         {
+            // обнуление
             _conf = null;
         }
         public void Save()
@@ -60,10 +65,12 @@ namespace ConwaysGameOfLife
 
         public static Config GetClone()
         {
+            // Создание копии конфига (для возможности отмены изменений)
             return (Config)Conf.MemberwiseClone();
         }
         public static void NewConfig(Config conf)
         {
+            // Замена текущего конфига (см выше)
             _conf = conf;
         }
         #endregion
@@ -85,13 +92,13 @@ namespace ConwaysGameOfLife
         }
         public int iAlive = Color.Black.ToArgb();
 
-        [XmlIgnore]
+        [XmlIgnore] // Color сериализуеться в пустой тег
         public Color DeadColor
         {
             get { return Color.FromArgb(iDead); }
             set { iDead = value.ToArgb(); }
         }
-        public int iDead = Color.White.ToArgb();
+        public int iDead = Color.White.ToArgb(); // для сериализации Color (можно и string вместо int)
 
         public int timerInterval
         {
