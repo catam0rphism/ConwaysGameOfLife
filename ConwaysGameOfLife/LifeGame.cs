@@ -13,31 +13,23 @@ namespace ConwaysGameOfLife
         public LifeGame(bool[,] cells)
         {
             // инициализация полей
-            width = cells.GetLength(0);
-            heigth = cells.GetLength(1);
-            this.cells = cells;
+            cells = new CellsImage(cells);
         }
 
-        // TODO: переписать на CellImage !
-        bool[,] cells;
-
-        int width;
-        int heigth;
-
-        public bool[,] Cells
+        CellsImage cells;
+        
+        public CellsImage Cells
 
         {
             get { return cells; }
             /* private */
             set
             {
-                width = cells.GetLength(0);
-                heigth = cells.GetLength(1);
-                cells = value; 
+                cells = value;
             }
         }
 
-        public bool[,] NextGeneration()
+        public CellsImage NextGeneration()
         {
             // buffer
             bool[,] buff = new bool[width, heigth];
@@ -48,7 +40,7 @@ namespace ConwaysGameOfLife
                     buff[i, j] = Analize(i, j);
                 }
             }
-            cells = buff;
+            cells.Cells = buff;
             return Cells;
         }
 
