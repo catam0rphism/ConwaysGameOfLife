@@ -74,6 +74,7 @@
             this.pictureBox.Size = new System.Drawing.Size(257, 220);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
+            this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseClick);
             // 
             // contextMenuStrip1
             // 

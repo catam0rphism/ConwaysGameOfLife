@@ -122,6 +122,14 @@ namespace ConwayaGameOfLifeGUI
             }
         }
 
+        public void SetCell(int w, int h)
+        {
+            lock (lg)
+            {
+                lg.Cells[w, h] = !lg.Cells[w, h];
+            }
+        }
+
         public event EventHandler<CellsEventArgs> generationUpdate;
         public class CellsEventArgs: EventArgs
         {

@@ -64,6 +64,7 @@ namespace ConwayaGameOfLifeGUI
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            lg.Stop();
             ConfigForm cf = new ConfigForm();
             cf.OnApplySetting += cf_OnApplySetting;
 
@@ -81,8 +82,9 @@ namespace ConwayaGameOfLifeGUI
             resize();
 
             // замена изображения
-            SetImage(lg.Cells.Image);
+            SetImage(CellsImage.GetImg(lg.Cells));
         }
+
 
         private void randomToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -117,6 +119,14 @@ namespace ConwayaGameOfLifeGUI
         {
             lg.Stop();
             lg.Update(new CellsImage());
+            SetImage(lg.Cells.Image);
+        }
+
+        private void pictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            int w = e.Location.X / Config.Conf.PixToCell;
+            int h = e.Location.Y / Config.Conf.PixToCell;
+            lg.SetCell(w, h);
             SetImage(lg.Cells.Image);
         }
     }
