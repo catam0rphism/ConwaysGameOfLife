@@ -101,6 +101,7 @@ namespace ConwaysGameOfLife
             img = GetImg(cells);
         }
 
+        // удалить (изменять через индекс)
         public void SetCells(Point p)
         {
             using (Graphics g = Graphics.FromImage(img))
@@ -132,5 +133,27 @@ namespace ConwaysGameOfLife
                 return s.Equals(Config.Conf.worldSize);
             }
         }
+
+        // неявное приведение
+        static public implicit operator bool[,](CellsImage c)
+        {
+            return c.cells;
+        }
+        static public implicit operator Bitmap(CellsImage c)
+        {
+            return c.img;
+        }
+
+#warning Проверить установку ячейки через индекс
+        public bool this[int w, int h]
+        {
+            get { return cells[w, h]; }
+            set 
+            {
+                cells[w, h] = value;
+                img = GetImg(cells);
+            }
+        }
+
     }
 }

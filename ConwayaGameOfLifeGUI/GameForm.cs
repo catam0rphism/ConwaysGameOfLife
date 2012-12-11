@@ -20,9 +20,10 @@ namespace ConwayaGameOfLifeGUI
         {
             InitializeComponent();
             resize();
+
+            lg.generationUpdate += lg_generationUpdate;
         }
 
-        const int btnHeigth = 77;
         void resize()
         {
             Size s = Config.Conf.worldSize;
@@ -30,37 +31,36 @@ namespace ConwayaGameOfLifeGUI
             pictureBox.Height = s.Height * Config.Conf.PixToCell;
             panel.Width = s.Width * Config.Conf.PixToCell;
             panel.Height = s.Height * Config.Conf.PixToCell;
-
-            lg.generationUpdate += lg_generationUpdate;
         }
 
+        /// <summary>
+        /// НЕ ИСПОЛЬЗОВАТЬ! метод для вызова Invoke
+        /// </summary>
+        /// <param name="img"></param>
         void setImage(Bitmap img)
         {
-            lg.Stop();
-
-            pictureBox.Invoke(
-                    new voiddel(
-                        delegate
-                        {
-                            pictureBox.Image = img;
-                            pictureBox.Refresh();
-                        }));
-            lg.Start();
-            
+            pictureBox.Image = img;
+            pictureBox.Refresh();
+        }
+        void SetImage(Bitmap img)
+        {
+            pictureBox.Invoke(new imgvoiddel(setImage), img);
         }
 
         void lg_generationUpdate(object sender, Game.CellsEventArgs e)
         {
-            setImage(e.cells.Image);
-            // УСТАНОВКА ИЗОБРАЖЕНИЯ ИЗ e.cells
+            // Clone() нужен?
+            Bitmap img = (Bitmap)e.cells.Image;
+
+            SetImage(img);
         }
 
         private void GameForm_Load(object sender, EventArgs e)
         {
-            setImage(lg.Cells.Image);
+            SetImage(lg.Cells.Image);
         }
 
-        delegate void voiddel();
+        delegate void imgvoiddel(Bitmap img);
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -69,7 +69,6 @@ namespace ConwayaGameOfLifeGUI
 
             cf.ShowDialog();
         }
-
         void cf_OnApplySetting(object sender, EventArgs e)
         {
             // проверка размера (обнуление Cells при несоответствии)
@@ -80,28 +79,25 @@ namespace ConwayaGameOfLifeGUI
 
             // обновление свойств элементов управления
             resize();
-            lg.Refresf();
 
             // замена изображения
-            setImage(lg.Cells.Image);
+            SetImage(lg.Cells.Image);
         }
 
         private void randomToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lg.Random();
-            setImage(lg.Cells.Image);
+            SetImage(lg.Cells.Image);
         }
 
         private void startToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lg.Start();
         }
-
         private void stopToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lg.Stop();
         }
-
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lg.Stop(); // подстраховка на случай исключений
@@ -112,7 +108,6 @@ namespace ConwayaGameOfLifeGUI
         {
             throw new NotImplementedException("В разработке");
         }
-
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             throw new NotImplementedException("В разработке");
@@ -122,7 +117,7 @@ namespace ConwayaGameOfLifeGUI
         {
             lg.Stop();
             lg.Update(new CellsImage());
-            setImage(lg.Cells.Image);
+            SetImage(lg.Cells.Image);
         }
     }
 }

@@ -13,10 +13,13 @@ namespace ConwaysGameOfLife
         public LifeGame(bool[,] cells)
         {
             // инициализация полей
-            cells = new CellsImage(cells);
+            this.cells = new CellsImage(cells);
+            width = cells.GetLength(0);
+            heigth = cells.GetLength(1);
         }
 
         CellsImage cells;
+        int width, heigth;
         
         public CellsImage Cells
 
@@ -26,6 +29,8 @@ namespace ConwaysGameOfLife
             set
             {
                 cells = value;
+                width = cells.Cells.GetLength(0);
+                heigth = cells.Cells.GetLength(1);
             }
         }
 

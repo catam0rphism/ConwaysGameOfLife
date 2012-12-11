@@ -11,7 +11,6 @@ namespace ConwayaGameOfLifeGUI
     {
         System.Timers.Timer generationTimer;
         LifeGame lg;
-        CellsImage cells;
 #warning убрать public!
         public Thread gameThread; 
 
@@ -38,9 +37,8 @@ namespace ConwayaGameOfLifeGUI
         public Game()
         {
             System.Drawing.Size s = Config.Conf.worldSize;
-            cells = new CellsImage(new bool[s.Width,s.Height]);
 
-            lg = new LifeGame(cells.Cells);
+            lg = new LifeGame(new bool[s.Width,s.Height]);
 
             gameThread = new Thread(gameThreadMain);
             gameThread.Start();
@@ -65,24 +63,22 @@ namespace ConwayaGameOfLifeGUI
         }
         private void gameMethod(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (lg.Cells.GetLength(0) != cells.Cells.GetLength(0))
-                lg.Cells = Cells.Cells;
-            try
-            {                
-                cells.Cells = lg.NextGeneration();
-
-                lock (cells)
-                {
+            lock (lg)
+            {
+                //try
+                //{
+                    CellsImage c = lg.NextGeneration();
                     // Передача изображения обработчику события
                     if (generationUpdate != null)
                     {
-                        generationUpdate(this, new CellsEventArgs(cells));
+                        generationUpdate(this, new CellsEventArgs(c));
                     }
-                }
-            }
-            finally
-            {
-                cells.Dispose();
+
+                //}
+                //finally
+                //{
+                //    lg.Cells.Dispose();
+                //}
             }
         }
 
@@ -104,48 +100,36 @@ namespace ConwayaGameOfLifeGUI
 
         public CellsImage Cells
         {
-            get { return cells; }
+            get { return lg.Cells; }
             set
             {
-                if (generationTimer.Enabled)
-                    generationTimer.Stop();
-
-                cells = value;
-                lg.Cells = value.Cells;
+                lock (lg)
+                {
+                    lg.Cells = value;
+                }
             }
         }
         public void Update(CellsImage cells,bool start = false)
         {
-            // TODO: настройка паузы при редактировании поля
-            if (generationTimer.Enabled)
-                generationTimer.Stop();
-            // инициализация поля(Field) новым полем(игровым), переданным в параметре
-            this.cells = cells;
-
-            // обновление lg
-            lg.Cells = cells.Cells;
+            lock (lg)
+            {
+                lg = new LifeGame(cells);
+            }
 
             if (start)
             {
-                Start();
+                 Start();
             }
         }
 
         public event EventHandler<CellsEventArgs> generationUpdate;
-        public class CellsEventArgs
-            :EventArgs
+        public class CellsEventArgs: EventArgs
         {
             public CellsEventArgs(CellsImage c)
             {
                 cells = c;
             }
             public CellsImage cells;
-        }
-
-        public void Refresf()
-        {
-            cells.Image = CellsImage.GetImg(cells.Cells);
-            lg.Cells = Cells.Cells;
         }
     }
 }
