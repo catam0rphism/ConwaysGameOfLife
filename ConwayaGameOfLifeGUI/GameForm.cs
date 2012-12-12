@@ -49,10 +49,7 @@ namespace ConwayaGameOfLifeGUI
 
         void lg_generationUpdate(object sender, Game.CellsEventArgs e)
         {
-            // Clone() нужен?
-            Bitmap img = (Bitmap)e.cells.Image;
-
-            SetImage(img);
+            SetImage(e.cells.Image);
         }
 
         private void GameForm_Load(object sender, EventArgs e)
@@ -126,7 +123,7 @@ namespace ConwayaGameOfLifeGUI
         {
             int w = e.Location.X / Config.Conf.PixToCell;
             int h = e.Location.Y / Config.Conf.PixToCell;
-            lg.SetCell(w, h);
+            lg.SetCell(w, h); // замирание примногократном вызове
             SetImage(lg.Cells.Image);
         }
     }

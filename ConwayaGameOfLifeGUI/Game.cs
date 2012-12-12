@@ -124,7 +124,7 @@ namespace ConwayaGameOfLifeGUI
 
         public void SetCell(int w, int h)
         {
-            lock (lg)
+            lock (this)
             {
                 lg.Cells[w, h] = !lg.Cells[w, h];
             }
