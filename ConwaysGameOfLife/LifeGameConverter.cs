@@ -71,6 +71,33 @@ namespace ConwaysGameOfLife
                 throw;
             }
         }
+        public static CellsImage LoadFromFileCI(string FileName)
+        {
+            try
+            {
+                StreamReader sr = new StreamReader(FileName);
+                using (sr)
+                {
+                    string[] s = sr.ReadLine().Split(' ');
+                    int w = int.Parse(s[0]);
+                    int h = int.Parse(s[1]);
+                    bool[,] cells = new bool[w, h];
+                    for (int i = 0; i < h; i++)
+                    {
+                        string st = sr.ReadLine();
+                        for (int j = 0; j < w; j++)
+                        {
+                            cells[j, i] = st[j] == '1';
+                        }
+                    }
+                    return new CellsImage(cells);
+                }
+            }
+            catch (IOException)
+            {
+                throw;
+            }
+        }
 
         /// <summary>
         /// Сохраняет текущее сстояние поля в виде изображения

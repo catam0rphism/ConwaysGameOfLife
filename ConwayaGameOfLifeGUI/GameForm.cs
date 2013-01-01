@@ -33,31 +33,26 @@ namespace ConwayaGameOfLifeGUI
             panel.Height = s.Height * Config.Conf.PixToCell;
         }
 
-        /// <summary>
-        /// НЕ ИСПОЛЬЗОВАТЬ! метод для вызова Invoke
-        /// </summary>
-        /// <param name="img"></param>
         void setImage(Bitmap img)
         {
             pictureBox.Image = img;
             pictureBox.Refresh();
         }
-        void SetImage(Bitmap img)
-        {
-            pictureBox.Invoke(new imgvoiddel(setImage), img);
-        }
-
         void lg_generationUpdate(object sender, Game.CellsEventArgs e)
-        {
-            SetImage(e.cells.Image);
+        {            
+            // замена картинки
+            pictureBox.Invoke(new imgvoiddel(setImage), e.cells.Image);
         }
-
         private void GameForm_Load(object sender, EventArgs e)
         {
-            SetImage(lg.Cells.Image);
+            
+            
+                setImage(lg.Cells.Image);
+            
         }
 
         delegate void imgvoiddel(Bitmap img);
+        delegate void voiddel();
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -79,16 +74,16 @@ namespace ConwayaGameOfLifeGUI
             resize();
 
             // замена изображения
-            SetImage(CellsImage.GetImg(lg.Cells));
+            setImage(CellsImage.GetImg(lg.Cells));
         }
-
+         
 
         private void randomToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            lg.Stop();
             lg.Random();
-            SetImage(lg.Cells.Image);
+            setImage(lg.Cells);
         }
-
         private void startToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lg.Start();
@@ -115,16 +110,21 @@ namespace ConwayaGameOfLifeGUI
         private void cleanToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lg.Stop();
-            lg.Update(new CellsImage());
-            SetImage(lg.Cells.Image);
+            lg.Cells.Def();
+            setImage(lg.Cells.Image);
         }
 
         private void pictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             int w = e.Location.X / Config.Conf.PixToCell;
             int h = e.Location.Y / Config.Conf.PixToCell;
-            lg.SetCell(w, h); // замирание примногократном вызове
-            SetImage(lg.Cells.Image);
+            lg.SetCell(w, h);
+            if (!lg.TimerEnabled)
+            {
+                lg.upd();
+                pictureBox.Invoke(new imgvoiddel(setImage), lg.Cells.Image);
+            }
+            
         }
     }
 }

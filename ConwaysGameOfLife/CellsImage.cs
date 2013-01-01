@@ -16,6 +16,7 @@ namespace ConwaysGameOfLife
         }
         public CellsImage()
         {
+            // wtf?
             Def();
         }
 
@@ -101,36 +102,18 @@ namespace ConwaysGameOfLife
             img = GetImg(cells);
         }
 
-        // удалить (изменять через индекс)
-        public void SetCells(Point p)
-        {
-            using (Graphics g = Graphics.FromImage(img))
-            {
-                int w = p.X / PixToCell;
-                int h = p.Y / PixToCell;
-                cells[w, h] = !cells[w, h];
-                if (cells[w, h])
-                {
-                    g.FillRectangle(new SolidBrush(Config.Conf.AliveColor), w * PixToCell, h * PixToCell, PixToCell, PixToCell);
-                }
-                else
-                {
-                    g.FillRectangle(new SolidBrush(Config.Conf.DeadColor), w * PixToCell, h * PixToCell, PixToCell, PixToCell);
-                }
-            }
-        }
-
         public void Dispose()
         {
             img.Dispose();
         }
-
         public bool IsValid
         {
             get
             {
                 Size s = new Size(cells.GetLength(0), cells.GetLength(1));
                 return s.Equals(Config.Conf.worldSize);
+                // Для проверки размеров текущего поля с размерами в конфигурационном файле
+                // при изменении настроек из GUI
             }
         }
 
@@ -144,12 +127,12 @@ namespace ConwaysGameOfLife
             return c.img;
         }
 
-#warning Проверить установку ячейки через индекс
         public bool this[int w, int h]
         {
             get { return cells[w, h]; }
             set 
             {
+                // нерационально (новое изображение при каждом изменении)
                 cells[w, h] = value;
                 img = GetImg(cells);
             }

@@ -7,18 +7,21 @@ using System.Threading;
 
 namespace ConwayaGameOfLifeGUI
 {
+    // блокировка на уровне этого класса вызывает взаимоблокировку О_о
     class Game
     {
+        bool imgFlag = false; // костыль :)
+        bool[,] buff;
+
         System.Timers.Timer generationTimer;
         LifeGame lg;
-#warning убрать public!
-        public Thread gameThread; 
+        Thread gameThread;
 
         public void Random()
         {
             // размер из конфига
             System.Drawing.Size s = Config.Conf.worldSize;
-            bool[,] cells = new bool[s.Width,s.Height];
+            bool[,] cells = new bool[s.Width, s.Height];
 
             Random r = new Random();
             for (int i = 0; i < s.Height; i++)
@@ -28,21 +31,20 @@ namespace ConwayaGameOfLifeGUI
                     cells[j, i] = (r.Next() & 0x01) == 1;
                 }
             }
-            // последовательная инициализация
-            CellsImage c = new CellsImage(cells);
 
-            this.Cells = c;
+            Cells = new CellsImage(cells);
         }
 
         public Game()
         {
             System.Drawing.Size s = Config.Conf.worldSize;
 
-            lg = new LifeGame(new bool[s.Width,s.Height]);
+            lg = new LifeGame(new bool[s.Width, s.Height]);
 
             gameThread = new Thread(gameThreadMain);
             gameThread.Start();
-            
+
+            buff = new bool[s.Width, s.Height];
         }
         public Game(CellsImage cells)
         {
@@ -65,34 +67,49 @@ namespace ConwayaGameOfLifeGUI
         {
             lock (lg)
             {
-                //try
-                //{
-                    CellsImage c = lg.NextGeneration();
-                    // Передача изображения обработчику события
-                    if (generationUpdate != null)
-                    {
-                        generationUpdate(this, new CellsEventArgs(c));
-                    }
+                if (imgFlag) // убрать этот жуткий косыль (ну или переделать в фичу)
+                {
+                    upd();
+                }
 
-                //}
-                //finally
-                //{
-                //    lg.Cells.Dispose();
-                //}
+                CellsImage c = lg.NextGeneration();
+                // Передача изображения обработчику события
+                if (generationUpdate != null)
+                {
+                    generationUpdate(this, new CellsEventArgs(c));
+                }
+
+            }
+        }
+
+        public void upd()
+        {
+            lock (buff)
+            {
+                for (int i = 0; i < buff.GetLength(0); i++)
+                {
+                    for (int j = 0; j < buff.GetLength(1); j++)
+                    {
+                        if (buff[i, j]) lg.Cells[i, j] = !lg.Cells[i, j];
+                        buff[i, j] = false;
+                    }
+                }
+                imgFlag = false;
             }
         }
 
         public void Start()
         {
             //lg.Cells = Cells.Cells;
-            lock (generationTimer)
+            lock (this)
             {
                 generationTimer.Start();
             }
+            
         }
         public void Stop()
         {
-            lock (generationTimer)
+            lock (this)
             {
                 generationTimer.Stop();
             }
@@ -103,35 +120,31 @@ namespace ConwayaGameOfLifeGUI
             get { return lg.Cells; }
             set
             {
-                lock (lg)
+                lock (this)
                 {
                     lg.Cells = value;
                 }
             }
         }
-        public void Update(CellsImage cells,bool start = false)
+        public void Update(CellsImage cells)
         {
-            lock (lg)
+            lock (this)
             {
                 lg = new LifeGame(cells);
-            }
-
-            if (start)
-            {
-                 Start();
             }
         }
 
         public void SetCell(int w, int h)
         {
-            lock (this)
+            lock (buff)
             {
-                lg.Cells[w, h] = !lg.Cells[w, h];
+                imgFlag = true;
+                buff[w, h] = !buff[w, h];
             }
         }
 
         public event EventHandler<CellsEventArgs> generationUpdate;
-        public class CellsEventArgs: EventArgs
+        public class CellsEventArgs : EventArgs
         {
             public CellsEventArgs(CellsImage c)
             {
@@ -139,5 +152,29 @@ namespace ConwayaGameOfLifeGUI
             }
             public CellsImage cells;
         }
+
+        public bool TimerEnabled
+        {
+            get
+            {
+                return generationTimer.Enabled;
+            }
+        }
+    }
+
+    interface IGame
+    {
+         void Start();
+        void Stop();
+
+        event EventHandler<Game.CellsEventArgs> GenerationUpdate;
+
+        void Random();
+
+        // обновление игрогого поля (замена существующего поля на переданное в параметре)
+        void Update(CellsImage cells /* interface for CellsImage ? */ );
+
+        void SetCell(int w, int h);
     }
 }
+
