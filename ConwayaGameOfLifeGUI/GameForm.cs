@@ -45,10 +45,10 @@ namespace ConwayaGameOfLifeGUI
         }
         private void GameForm_Load(object sender, EventArgs e)
         {
-            
-            
-                setImage(lg.Cells.Image);
-            
+
+
+            setImage(lg.Cells.Image);
+
         }
 
         delegate void imgvoiddel(Bitmap img);
@@ -76,13 +76,15 @@ namespace ConwayaGameOfLifeGUI
             // замена изображения
             setImage(CellsImage.GetImg(lg.Cells));
         }
-         
+
 
         private void randomToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            bool b = lg.TimerEnabled;
             lg.Stop();
             lg.Random();
             setImage(lg.Cells);
+            if (b) lg.Start();
         }
         private void startToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -95,16 +97,31 @@ namespace ConwayaGameOfLifeGUI
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lg.Stop(); // подстраховка на случай исключений
+            lg.Cells.Dispose();
             this.Close();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException("В разработке");
+            throw new Exception("не работает");
+            lg.Stop();
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                // TODO: проверка на валидность файла
+                lg.Update(LifeGameConverter.LoadFromFileCI(openFileDialog.FileName));
+                // переписать!!!
+
+                resize();
+                setImage(lg.Cells.Image);
+            }
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException("В разработке");
+            lg.Stop();
+            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                LifeGameConverter.SaveToFile(lg.Cells.Cells, saveFileDialog.FileName);
+            }
         }
 
         private void cleanToolStripMenuItem_Click(object sender, EventArgs e)

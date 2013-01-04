@@ -7,7 +7,6 @@ using System.Threading;
 
 namespace ConwayaGameOfLifeGUI
 {
-    // блокировка на уровне этого класса вызывает взаимоблокировку О_о
     class Game
     {
         bool imgFlag = false; // костыль :)
@@ -160,21 +159,6 @@ namespace ConwayaGameOfLifeGUI
                 return generationTimer.Enabled;
             }
         }
-    }
-
-    interface IGame
-    {
-         void Start();
-        void Stop();
-
-        event EventHandler<Game.CellsEventArgs> GenerationUpdate;
-
-        void Random();
-
-        // обновление игрогого поля (замена существующего поля на переданное в параметре)
-        void Update(CellsImage cells /* interface for CellsImage ? */ );
-
-        void SetCell(int w, int h);
     }
 }
 

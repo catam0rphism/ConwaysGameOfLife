@@ -66,8 +66,42 @@ namespace ConwaysGameOfLife
         bool Analize(int w,int h)
         {
             int c = livecount(w, h);
-            return cells[w, h] ? c == 2 | c == 3 : c == 3;
-            // TODO: поддежка других автоматов (правила как один Enum)
+
+            // переделать
+            switch (Config.Conf.GameRules)
+            {
+                case Rules.Assimilation:
+                    return cells[w, h] ? c == 4 || c == 5 || c == 6 || c == 7 : c == 3 || c == 4 || c == 5;
+
+                case Rules.Default:
+                    return cells[w, h] ? c == 2 || c == 3 : c == 3;
+
+                case Rules.HighLife:
+                    return cells[w, h] ? c == 2 || c == 3 : c == 3 || c == 6;
+
+                case Rules.Gnarl:
+                    return cells[w, h] ? c == 1 : c == 1;
+                
+                case Rules.Replicator:
+                    return cells[w, h] ? c==1||c == 3 || c == 5 || c == 7 : c==1||c == 3 || c == 5 || c == 7;
+
+                case Rules.test:
+                    return cells[w, h] ? c == 3 || c == 5 || c == 7 : c == 3 || c == 5 || c == 7;
+
+                default:
+                    throw new Exception("правила отсутствуют в конфиге (назначить дефолтное значение)");
+            }
         }
+    }
+
+    public enum Rules
+    {
+        Default,
+        Gnarl,
+        Assimilation,
+        HighLife,
+        Replicator,
+        test
+        // ...
     }
 }

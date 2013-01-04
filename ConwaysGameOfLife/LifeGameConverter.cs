@@ -19,19 +19,24 @@ namespace ConwaysGameOfLife
         public static void SaveToFile(bool[,] cells,string FileName)
         {
             try
-            {                
-                StreamWriter sw = new StreamWriter(FileName);
-                using (sw)
+            {                   
+                using (StreamWriter sw = new StreamWriter(FileName))
                 {
+                    uint c = 0;
                     sw.Write(cells.GetLength(0) + " " + cells.GetLength(1)+"\n");
                     for (int i = 0; i < cells.GetLength(1); i++)
                     {
                         for (int j = 0; j < cells.GetLength(0); j++)
                         {
-                            sw.Write(cells[j, i] ? '1' : '0');
+                            c = (uint)(c | (cells[i, j] ? 1 : 0));
+                            c = (c << 1);
+
+                            // а декодинг этого :)
                         }
-                        sw.Write("\n");
+                        sw.Write(c + "\n");
+                        c = 0;
                     }
+                    
                 }
             }
             catch (IOException)
