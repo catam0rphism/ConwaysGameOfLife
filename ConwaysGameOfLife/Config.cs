@@ -114,7 +114,7 @@ namespace ConwaysGameOfLife
         }
         private int pixtocell = 10;
 
-        public Rules GameRules { get; set; }
+        public string GameRules { get; set; }
     }
 }
 

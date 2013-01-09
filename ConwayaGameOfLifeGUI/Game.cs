@@ -159,6 +159,14 @@ namespace ConwayaGameOfLifeGUI
                 return generationTimer.Enabled;
             }
         }
+
+        public void SetRules(GameRules gr)
+        {
+            lock (this)
+            {
+                lg.SetRules(gr);
+            }
+        }
     }
 }
 

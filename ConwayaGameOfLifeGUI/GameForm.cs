@@ -75,6 +75,14 @@ namespace ConwayaGameOfLifeGUI
 
             // замена изображения
             setImage(CellsImage.GetImg(lg.Cells));
+            try
+            {
+                lg.SetRules(GameRules.Parse(Config.Conf.GameRules));
+            }
+            catch (Exception)
+            {
+                lg.SetRules(GameRules.Conways);
+            }
         }
 
 
@@ -104,16 +112,6 @@ namespace ConwayaGameOfLifeGUI
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             throw new Exception("не работает");
-            lg.Stop();
-            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                // TODO: проверка на валидность файла
-                lg.Update(LifeGameConverter.LoadFromFileCI(openFileDialog.FileName));
-                // переписать!!!
-
-                resize();
-                setImage(lg.Cells.Image);
-            }
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {

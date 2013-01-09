@@ -16,6 +16,15 @@ namespace ConwaysGameOfLife
             this.cells = new CellsImage(cells);
             width = cells.GetLength(0);
             heigth = cells.GetLength(1);
+
+            try
+            {
+                this.SetRules(GameRules.Parse(Config.Conf.GameRules));
+            }
+            catch (Exception)
+            {
+                this.SetRules(GameRules.Conways);
+            }
         }
 
         CellsImage cells;
@@ -66,42 +75,14 @@ namespace ConwaysGameOfLife
         bool Analize(int w,int h)
         {
             int c = livecount(w, h);
-
-            // переделать
-            switch (Config.Conf.GameRules)
-            {
-                case Rules.Assimilation:
-                    return cells[w, h] ? c == 4 || c == 5 || c == 6 || c == 7 : c == 3 || c == 4 || c == 5;
-
-                case Rules.Default:
-                    return cells[w, h] ? c == 2 || c == 3 : c == 3;
-
-                case Rules.HighLife:
-                    return cells[w, h] ? c == 2 || c == 3 : c == 3 || c == 6;
-
-                case Rules.Gnarl:
-                    return cells[w, h] ? c == 1 : c == 1;
-                
-                case Rules.Replicator:
-                    return cells[w, h] ? c==1||c == 3 || c == 5 || c == 7 : c==1||c == 3 || c == 5 || c == 7;
-
-                case Rules.test:
-                    return cells[w, h] ? c == 3 || c == 5 || c == 7 : c == 3 || c == 5 || c == 7;
-
-                default:
-                    throw new Exception("правила отсутствуют в конфиге (назначить дефолтное значение)");
-            }
+            return gr.CellState(c, cells[w, h]);
         }
-    }
 
-    public enum Rules
-    {
-        Default,
-        Gnarl,
-        Assimilation,
-        HighLife,
-        Replicator,
-        test
-        // ...
+        GameRules gr = GameRules.Conways;
+
+        public void SetRules(GameRules gr)
+        {
+            this.gr = gr;
+        }
     }
 }
